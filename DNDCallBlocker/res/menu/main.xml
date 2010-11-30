@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"><!--
+	<item android:id="@+id/blacklist" android:icon="@android:drawable/ic_menu_info_details"
+		android:title="@string/title_block_list" />
+	--><item android:id="@+id/about" android:icon="@android:drawable/ic_menu_info_details"
+		android:title="@string/title_about" />
+	<item android:id="@+id/license" android:icon="@android:drawable/ic_menu_agenda"
+		android:title="@string/title_license" />
+	<item android:id="@+id/donate" android:icon="@drawable/donate"
+		android:title="@string/title_donate" />
+</menu>
