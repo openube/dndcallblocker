@@ -29,13 +29,12 @@ public class DNDCallBlockerBlackListActivity extends ListActivity {
 
 	private static final int PICK_CONTACT = 3;
 	private static final String BLACKLIST_PREF = "blacklist";
-	
+
 	private ArrayList<String> m_phones;
 	private ArrayList<String> m_contacts;
 	private LayoutInflater m_Inflater;
 	private ArrayAdapter<String> m_adapter;
 	private SharedPreferences settings;
-
 
 	/**
 	 * Called when the activity is first created. Responsible for initializing
@@ -78,7 +77,7 @@ public class DNDCallBlockerBlackListActivity extends ListActivity {
 		} else {
 			// do nothing, list is empty
 		}
-		
+
 		// this adapter makes the black list visible to user
 		m_adapter = new ArrayAdapter<String>(this, R.layout.list_item, m_phones) {
 			@Override
@@ -142,31 +141,34 @@ public class DNDCallBlockerBlackListActivity extends ListActivity {
 		case (PICK_CONTACT):
 			if (resultCode == Activity.RESULT_OK) {
 				Uri contactData = data.getData();
-				Cursor c = managedQuery(contactData, null, null, null, null);
-				// get selected phone number & contact name
-				if (c.moveToFirst()) {
-					m_phones.add(c
-							.getString(
-									c.getColumnIndexOrThrow(ContactsContract.CommonDataKinds.Phone.NUMBER))
-							.trim());
-					m_contacts
-							.add(c.getString(
-									c.getColumnIndexOrThrow(ContactsContract.Contacts.DISPLAY_NAME))
-									.trim());
-					// add new item to list
-					String tmp_phones = m_phones.toString();
-					tmp_phones = tmp_phones.substring(1,
-							tmp_phones.length() - 1);
-					// save to sharedpreferences 
-					SharedPreferences.Editor editor = settings.edit();
-					editor.putString(BLACKLIST_PREF, tmp_phones);
-					editor.commit();
-					// refresh ui
-					m_adapter.notifyDataSetChanged();
-					// inform user
-					String toast_text = getString(R.string.phone_added);
-					Toast.makeText(getApplicationContext(), toast_text,
-							Toast.LENGTH_SHORT).show();
+				// somehow could be possible that data.getData is null :(
+				if (contactData != null) {
+					Cursor c = managedQuery(contactData, null, null, null, null);
+					// get selected phone number & contact name
+					if (c.moveToFirst()) {
+						m_phones.add(c
+								.getString(
+										c.getColumnIndexOrThrow(ContactsContract.CommonDataKinds.Phone.NUMBER))
+								.trim());
+						m_contacts
+								.add(c.getString(
+										c.getColumnIndexOrThrow(ContactsContract.Contacts.DISPLAY_NAME))
+										.trim());
+						// add new item to list
+						String tmp_phones = m_phones.toString();
+						tmp_phones = tmp_phones.substring(1,
+								tmp_phones.length() - 1);
+						// save to sharedpreferences
+						SharedPreferences.Editor editor = settings.edit();
+						editor.putString(BLACKLIST_PREF, tmp_phones);
+						editor.commit();
+						// refresh ui
+						m_adapter.notifyDataSetChanged();
+						// inform user
+						String toast_text = getString(R.string.phone_added);
+						Toast.makeText(getApplicationContext(), toast_text,
+								Toast.LENGTH_SHORT).show();
+					}
 				}
 			}
 		}
