@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout 
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:admob="http://schemas.android.com/apk/res/hu.zoliweb.android.dndcallblocker"
+        
+        android:orientation="vertical"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+>
+
+        <com.admob.android.ads.AdView
+                android:id="@+id/ad"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                admob:backgroundColor="#000000"
+                admob:primaryTextColor="#FFFFFF"
+                admob:secondaryTextColor="#CCCCCC"
+        />
+
+        <ListView 
+                android:id="@android:id/list"
+            android:layout_width="fill_parent" 
+            android:layout_height="fill_parent"
+            android:drawSelectorOnTop="false"
+            android:scrollbarAlwaysDrawVerticalTrack="true"
+    />
+
+</LinearLayout>
+
