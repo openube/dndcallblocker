@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<string-array name="number_exceptions">
+    	<item>Nincs kivétel</item>
+    	<item>Kivéve mentett számok</item>
+    	<item>Kivéve kedvencek</item>
+   	</string-array>
+	<string-array name="number_exceptions_values">
+    	<item>none</item>
+       	<item>contacts</item>
+    	<item>starred</item>
+	</string-array>
+	<string-array name="handle_call">
+    	<item>Némítás</item>
+    	<item>Automatikus elutasítás</item>
+    	<!-- FIXME: enable this when works correctly
+    	<item>Answer the call then block</item>
+    	-->
+   	</string-array>
+	<string-array name="handle_call_values">
+    	<item>silence</item>
+       	<item>block</item>
+       	<!-- FIXME: enable this when works correctly
+    	<item>answer_then_block</item>
+    	-->
+	</string-array>
+</resources>

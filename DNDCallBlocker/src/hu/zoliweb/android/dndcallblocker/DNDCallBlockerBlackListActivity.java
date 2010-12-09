@@ -15,6 +15,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.provider.ContactsContract;
 import android.provider.ContactsContract.PhoneLookup;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,6 +28,7 @@ import android.widget.Toast;
 
 public class DNDCallBlockerBlackListActivity extends ListActivity {
 
+	private static final String TAG = "DNDCallBlockerBlackListActivity";
 	private static final int PICK_CONTACT = 3;
 	private static final String BLACKLIST_PREF = "blacklist";
 
@@ -146,28 +148,32 @@ public class DNDCallBlockerBlackListActivity extends ListActivity {
 					Cursor c = managedQuery(contactData, null, null, null, null);
 					// get selected phone number & contact name
 					if (c.moveToFirst()) {
-						m_phones.add(c
-								.getString(
-										c.getColumnIndexOrThrow(ContactsContract.CommonDataKinds.Phone.NUMBER))
-								.trim());
-						m_contacts
-								.add(c.getString(
-										c.getColumnIndexOrThrow(ContactsContract.Contacts.DISPLAY_NAME))
-										.trim());
-						// add new item to list
-						String tmp_phones = m_phones.toString();
-						tmp_phones = tmp_phones.substring(1,
-								tmp_phones.length() - 1);
-						// save to sharedpreferences
-						SharedPreferences.Editor editor = settings.edit();
-						editor.putString(BLACKLIST_PREF, tmp_phones);
-						editor.commit();
-						// refresh ui
-						m_adapter.notifyDataSetChanged();
-						// inform user
-						String toast_text = getString(R.string.phone_added);
-						Toast.makeText(getApplicationContext(), toast_text,
-								Toast.LENGTH_SHORT).show();
+						try {
+							m_phones.add(c
+									.getString(
+											c.getColumnIndexOrThrow(ContactsContract.CommonDataKinds.Phone.NUMBER))
+									.trim());
+							m_contacts
+									.add(c.getString(
+											c.getColumnIndexOrThrow(ContactsContract.Contacts.DISPLAY_NAME))
+											.trim());
+							// add new item to list
+							String tmp_phones = m_phones.toString();
+							tmp_phones = tmp_phones.substring(1,
+									tmp_phones.length() - 1);
+							// save to sharedpreferences
+							SharedPreferences.Editor editor = settings.edit();
+							editor.putString(BLACKLIST_PREF, tmp_phones);
+							editor.commit();
+							// refresh ui
+							m_adapter.notifyDataSetChanged();
+							// inform user
+							String toast_text = getString(R.string.phone_added);
+							Toast.makeText(getApplicationContext(), toast_text,
+									Toast.LENGTH_SHORT).show();
+						} catch (IllegalArgumentException e) {
+							Log.e(TAG, e.getMessage());
+						}
 					}
 				}
 			}
