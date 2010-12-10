@@ -33,13 +33,11 @@ public class DNDCallBlockerReceiver extends BroadcastReceiver {
 
 				// block hidden numbers
 				if (!(prefs.getBoolean("block_unknown", false) && number == null)) {
-
+					
 					// block from list
 					if (prefs.getBoolean("block_list", false)) {
 						String tmp_phones = prefs.getString(BLACKLIST_PREF, "");
-						if ((number == null)
-								|| (tmp_phones.indexOf(number) == -1)) {
-							// unknown number or
+						if (tmp_phones.indexOf(number) == -1) {
 							// black list is on, but doesn't contains this
 							// number
 							return;
@@ -54,7 +52,7 @@ public class DNDCallBlockerReceiver extends BroadcastReceiver {
 			// check if any exception apply to this incoming number
 			String number_exceptions = prefs.getString("number_exceptions",
 					"none");
-			if (!number_exceptions.equals("none") && (number != null)) {
+			if (!number_exceptions.equals("none")) {
 				int is_starred = isStarred(context, number);
 				if (number_exceptions.equals("contacts") && is_starred >= 0) {
 					// number is in contact list
