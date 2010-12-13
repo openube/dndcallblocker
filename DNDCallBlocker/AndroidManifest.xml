@@ -16,7 +16,7 @@
 		
 		<receiver android:name="DNDCallBlockerReceiver"
 			android:enabled="true">
-			<intent-filter>
+			<intent-filter android:priority="100">
 				<action android:name="android.intent.action.PHONE_STATE"></action>
 			</intent-filter>
 		</receiver>

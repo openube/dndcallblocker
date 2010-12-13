@@ -14,6 +14,7 @@ import android.util.Log;
 import com.android.internal.telephony.ITelephony;
 
 public class DNDCallBlockerIntentService extends IntentService {
+	private static final String DNDTAG = "DNDCallBlocker";
 
 	public DNDCallBlockerIntentService() {
 		super("DNDCallBlockerIntentService");
@@ -22,10 +23,13 @@ public class DNDCallBlockerIntentService extends IntentService {
 	@Override
 	protected void onHandleIntent(Intent intent) {
 		Context context = getBaseContext();
+		
+		Log.d(DNDTAG, "SRV: Got control.");
 
 		// Make sure the phone is still ringing
 		TelephonyManager tm = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
 		if (tm.getCallState() != TelephonyManager.CALL_STATE_RINGING) {
+			Log.d(DNDTAG, "SRV: Not ringing anymore.");
 			return;
 		}
 
@@ -35,7 +39,7 @@ public class DNDCallBlockerIntentService extends IntentService {
 		}
 		catch (Exception e) {
 			e.printStackTrace();
-			Log.d("DNDCallBlocker","Error trying to reject using telephony service.");
+			Log.d(DNDTAG,"Error trying to reject using telephony service.");
 		}
 
 		return;
@@ -56,10 +60,13 @@ public class DNDCallBlockerIntentService extends IntentService {
 		// call handling preference
 		String handle_call = prefs.getString("handle_call", "silence");
 		
+		Log.d(DNDTAG, "SRV: pref=".concat(handle_call));
+		
 		// Silence the ringer first
 		telephonyService.silenceRinger();
 		
 		if (handle_call.equals("block")) {
+			Log.d(DNDTAG, "SRV: Block");
 			// just block the call
 			telephonyService.endCall();
 			return;
