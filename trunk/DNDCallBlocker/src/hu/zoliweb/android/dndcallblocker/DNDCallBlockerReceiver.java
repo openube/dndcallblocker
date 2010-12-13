@@ -9,9 +9,11 @@ import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.provider.ContactsContract.PhoneLookup;
 import android.telephony.TelephonyManager;
+import android.util.Log;
 
 public class DNDCallBlockerReceiver extends BroadcastReceiver {
 	private static final String BLACKLIST_PREF = "blacklist";
+	private static final String DNDTAG = "DNDCallBlocker";
 
 	@Override
 	public void onReceive(Context context, Intent intent) {
@@ -25,9 +27,11 @@ public class DNDCallBlockerReceiver extends BroadcastReceiver {
 				.getStringExtra(TelephonyManager.EXTRA_STATE);
 		String number = intent
 				.getStringExtra(TelephonyManager.EXTRA_INCOMING_NUMBER);
+		Log.d(DNDTAG, "INF: Broadcast received.");
 
 		if (phone_state.equals(TelephonyManager.EXTRA_STATE_RINGING)
 				&& prefs.getBoolean("enabled", false)) {
+			Log.d(DNDTAG, "INF: Phone ringing, app enabled.");
 			// block all rule...
 			if (!prefs.getBoolean("block_all", false)) {
 
@@ -42,13 +46,19 @@ public class DNDCallBlockerReceiver extends BroadcastReceiver {
 							// unknown number or
 							// black list is on, but doesn't contains this
 							// number
+							Log.d(DNDTAG, "INF: Unknown or not on black list.");
 							return;
 						}
+						Log.d(DNDTAG, "BLOCK: Number on black list.");
 					} else {
 						// no rule applied to this incoming number
+						Log.d(DNDTAG, "INF: No rule.");
 						return;
 					}
 				}
+				Log.d(DNDTAG, "BLOCK: Number unknown, blocked.");
+			} else {
+				Log.d(DNDTAG, "BLOCK: Block all.");
 			}
 
 			// check if any exception apply to this incoming number
@@ -58,13 +68,17 @@ public class DNDCallBlockerReceiver extends BroadcastReceiver {
 				int is_starred = isStarred(context, number);
 				if (number_exceptions.equals("contacts") && is_starred >= 0) {
 					// number is in contact list
+					Log.d(DNDTAG, "EXC: Number on contact list.");
 					return;
 				} else if (number_exceptions.equals("starred")
 						&& is_starred == 1) {
 					// number is starred
+					Log.d(DNDTAG, "EXC: Number is starred.");
 					return;
 				}
 			}
+			
+			Log.d(DNDTAG, "INF: Start service.");
 
 			// we have to block this call...
 			// Call a service, since this could take a few seconds
