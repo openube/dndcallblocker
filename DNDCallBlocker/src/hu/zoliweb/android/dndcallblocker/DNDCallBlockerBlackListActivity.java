@@ -4,9 +4,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -15,6 +17,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.provider.ContactsContract;
 import android.provider.ContactsContract.PhoneLookup;
+import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,6 +25,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -188,4 +192,35 @@ public class DNDCallBlockerBlackListActivity extends ListActivity {
 		startActivityForResult(intent, PICK_CONTACT);
 	}
 
+	public void addPhoneNumber(View target) {
+		final AlertDialog.Builder alert = new AlertDialog.Builder(this);
+		final EditText input = new EditText(this);
+		//TODO: put these strings to resources 
+		final CharSequence[] items = {"Start with...", "Contains...", "End with..."};
+		
+		input.setInputType(InputType.TYPE_CLASS_PHONE);
+		alert.setSingleChoiceItems(items, -1, null);
+		
+		alert.setView(input);
+		alert.setIcon(R.drawable.icon);
+		alert.setTitle(R.string.title_add_number);
+		// TODO: make hint on input text somehow
+		
+		alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int whichButton) {
+				String value = input.getText().toString().trim();
+				// TODO: save input value to preferences
+				// toast not necessary
+				Toast.makeText(getApplicationContext(), value,
+						Toast.LENGTH_SHORT).show();
+			}
+		});
+		alert.setNegativeButton("Cancel",
+				new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int whichButton) {
+						dialog.cancel();
+					}
+				});
+		alert.show();
+	}
 }
