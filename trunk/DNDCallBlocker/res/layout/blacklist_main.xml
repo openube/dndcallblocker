@@ -11,17 +11,13 @@ xmlns:admob="http://schemas.android.com/apk/res/hu.zoliweb.android.dndcallblocke
                 admob:primaryTextColor="#FFFFFF"
                 admob:secondaryTextColor="#CCCCCC"
         />
-<!--	<TextView android:text="@string/title_add" android:gravity="center_vertical"-->
-<!--		android:layout_width="fill_parent" android:layout_height="wrap_content"-->
-<!--		android:padding="5dp" android:textSize="24sp" android:clickable="true"-->
-<!--		android:onClick="pickFromContacts">-->
-<!---->
-<!--	</TextView>-->
-	<LinearLayout android:id="@+id/bottom_control_bar"
+	<LinearLayout android:id="@+id/top_control_bar"
 		android:layout_width="fill_parent" android:layout_height="wrap_content"
-		android:layout_alignParentBottom="true">
-		<Button android:layout_width="fill_parent"
-			android:layout_height="wrap_content" android:text="@string/title_add" android:onClick="pickFromContacts"/>
+		android:layout_alignParentBottom="true" android:gravity="center">
+		<Button android:layout_width="wrap_content"
+			android:layout_height="wrap_content" android:text="@string/title_add_contact" android:onClick="pickFromContacts"/>
+		<Button android:layout_width="wrap_content"
+			android:layout_height="wrap_content" android:text="@string/title_add_number" android:onClick="addPhoneNumber"/>
 	</LinearLayout>
 	<ListView android:layout_width="fill_parent"
 		android:layout_height="wrap_content" android:id="@android:id/list" android:headerDividersEnabled="true"></ListView>
