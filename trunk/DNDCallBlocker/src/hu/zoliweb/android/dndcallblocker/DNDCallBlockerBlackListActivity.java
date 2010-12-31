@@ -1,3 +1,25 @@
+/*
+ * DND Call Blocker
+ * A simple Android application that automatically block unwanted incoming calls.
+ * Copyright (c) 2010 Zoltan Meleg, android+dndcb@zoliweb.hu
+ * 
+ * This file is part of DND Call Blocker.
+ * 
+ * DND Call Blocker is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * DND Call Blocker is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with DND Call Blocker.  If not, see <http://www.gnu.org/licenses/>.
+ * 
+ */
+
 package hu.zoliweb.android.dndcallblocker;
 
 import java.util.ArrayList;
@@ -41,6 +63,7 @@ public class DNDCallBlockerBlackListActivity extends ListActivity {
 	private LayoutInflater m_Inflater;
 	private ArrayAdapter<String> m_adapter;
 	private SharedPreferences settings;
+	private int checkedItem;
 
 	/**
 	 * Called when the activity is first created. Responsible for initializing
@@ -195,23 +218,56 @@ public class DNDCallBlockerBlackListActivity extends ListActivity {
 	public void addPhoneNumber(View target) {
 		final AlertDialog.Builder alert = new AlertDialog.Builder(this);
 		final EditText input = new EditText(this);
-		//TODO: put these strings to resources 
-		final CharSequence[] items = {"Start with...", "Contains...", "End with..."};
+		
+		checkedItem = 0;
 		
 		input.setInputType(InputType.TYPE_CLASS_PHONE);
-		alert.setSingleChoiceItems(items, -1, null);
+		//input.setHint("type number here");
+		
+		alert.setSingleChoiceItems(R.array.manual_phonenumber_types, 0, new DialogInterface.OnClickListener() {
+		    public void onClick(DialogInterface dialog, int item) {
+		    	checkedItem = item;
+		    }
+		});
 		
 		alert.setView(input);
 		alert.setIcon(R.drawable.icon);
 		alert.setTitle(R.string.title_add_number);
-		// TODO: make hint on input text somehow
 		
 		alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int whichButton) {
 				String value = input.getText().toString().trim();
-				// TODO: save input value to preferences
-				// toast not necessary
-				Toast.makeText(getApplicationContext(), value,
+				switch (checkedItem) {
+				case 0:
+					value = value.trim() + "*";
+					break;
+				case 1:
+					value = "*"+value.trim()+"*";
+					break;
+				case 2:
+					value = "*"+value.trim();
+					break;
+
+				default:
+					break;
+				}
+				// put input to list
+				m_phones.add(value);
+				m_contacts.add("N/A");
+
+				// add new item to list
+				String tmp_phones = m_phones.toString();
+				tmp_phones = tmp_phones.substring(1,
+						tmp_phones.length() - 1);
+				// save to sharedpreferences
+				SharedPreferences.Editor editor = settings.edit();
+				editor.putString(BLACKLIST_PREF, tmp_phones);
+				editor.commit();
+				// refresh ui
+				m_adapter.notifyDataSetChanged();
+				// inform user
+				String toast_text = getString(R.string.phone_added);
+				Toast.makeText(getApplicationContext(), toast_text,
 						Toast.LENGTH_SHORT).show();
 			}
 		});
@@ -223,4 +279,5 @@ public class DNDCallBlockerBlackListActivity extends ListActivity {
 				});
 		alert.show();
 	}
+
 }
