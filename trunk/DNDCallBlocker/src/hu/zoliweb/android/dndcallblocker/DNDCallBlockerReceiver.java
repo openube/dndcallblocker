@@ -42,7 +42,7 @@ public class DNDCallBlockerReceiver extends BroadcastReceiver {
 	private ArrayList<String> m_startswith;
 	private ArrayList<String> m_endswith;
 	private ArrayList<String> m_contains;
-	private ArrayList<String> m_fullnums;
+	private String m_fullnums;
 
 	@Override
 	public void onReceive(Context context, Intent intent) {
@@ -69,33 +69,15 @@ public class DNDCallBlockerReceiver extends BroadcastReceiver {
 
 					// block from list
 					if (prefs.getBoolean("block_list", false)) {
-						m_contains = new ArrayList<String>();
-						m_startswith = new ArrayList<String>();
-						m_endswith = new ArrayList<String>();
-						m_fullnums = new ArrayList<String>();
-						
-						String tmp_phones = prefs.getString(BLACKLIST_PREF, "");
-						String[] tmp_phonesArr = tmp_phones.split(", ");
-						for (String s:tmp_phonesArr) {
-							if (s.trim().startsWith("*") && s.trim().endsWith("*")) {
-								// send to 'contains array'
-								m_contains.add(s.substring(1, s.trim().length()-1));
-							} else if (s.trim().startsWith("*")) {
-								// send to 'ends with array' 
-								m_endswith.add(s.substring(1, s.trim().length()));
-							} else if (s.trim().endsWith("*")) {
-								// send to 'starts with array'
-								m_startswith.add(s.substring(0, s.trim().length()-1));
-							} else {
-								// full number
-								m_fullnums.add(s.trim());
-							}
-						}
+						initArrays(prefs);						
 						if ((number == null)
-								|| (tmp_phones.indexOf(number) == -1)) {
+								|| (m_fullnums.indexOf(number) == -1)) {
 							// unknown number or
 							// black list is on, but doesn't contains this
 							// number
+							
+							// TODO: add handling of contains, end with, start with rules...
+							
 							Log.d(DNDTAG, "INF: Unknown or not on black list.");
 							return;
 						}
@@ -150,5 +132,30 @@ public class DNDCallBlockerReceiver extends BroadcastReceiver {
 			c.close();
 		}
 		return starred;
+	}
+	
+	private void initArrays(SharedPreferences prefs) {
+		m_contains = new ArrayList<String>();
+		m_startswith = new ArrayList<String>();
+		m_endswith = new ArrayList<String>();
+		m_fullnums = new String("");
+		
+		String tmp_phones = prefs.getString(BLACKLIST_PREF, "");
+		String[] tmp_phonesArr = tmp_phones.split(", ");
+		for (String s:tmp_phonesArr) {
+			if (s.trim().startsWith("*") && s.trim().endsWith("*")) {
+				// send to 'contains array'
+				m_contains.add(s.substring(1, s.trim().length()-1));
+			} else if (s.trim().startsWith("*")) {
+				// send to 'ends with array' 
+				m_endswith.add(s.substring(1, s.trim().length()));
+			} else if (s.trim().endsWith("*")) {
+				// send to 'starts with array'
+				m_startswith.add(s.substring(0, s.trim().length()-1));
+			} else {
+				// full number
+				m_fullnums += ", " + s.trim();
+			}
+		}
 	}
 }
