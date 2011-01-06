@@ -222,6 +222,8 @@ public class DNDCallBlockerBlackListActivity extends ListActivity {
 		checkedItem = 0;
 		
 		input.setInputType(InputType.TYPE_CLASS_PHONE);
+		
+		//TODO: add above string to resources...
 		//input.setHint("type number here");
 		
 		alert.setSingleChoiceItems(R.array.manual_phonenumber_types, 0, new DialogInterface.OnClickListener() {
@@ -234,6 +236,7 @@ public class DNDCallBlockerBlackListActivity extends ListActivity {
 		alert.setIcon(R.drawable.icon);
 		alert.setTitle(R.string.title_add_number);
 		
+		//FIXME: not allow to add blank input
 		alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int whichButton) {
 				String value = input.getText().toString().trim();

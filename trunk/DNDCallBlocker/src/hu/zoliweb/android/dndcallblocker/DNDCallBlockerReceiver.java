@@ -38,7 +38,7 @@ import android.util.Log;
 public class DNDCallBlockerReceiver extends BroadcastReceiver {
 	private static final String BLACKLIST_PREF = "blacklist";
 	private static final String DNDTAG = "DNDCallBlocker";
-	
+
 	private ArrayList<String> m_startswith;
 	private ArrayList<String> m_endswith;
 	private ArrayList<String> m_contains;
@@ -58,6 +58,7 @@ public class DNDCallBlockerReceiver extends BroadcastReceiver {
 				.getStringExtra(TelephonyManager.EXTRA_INCOMING_NUMBER);
 		Log.d(DNDTAG, "INF: Broadcast received.");
 
+		// check if phone still ringing and our app is enabled
 		if (phone_state.equals(TelephonyManager.EXTRA_STATE_RINGING)
 				&& prefs.getBoolean("enabled", false)) {
 			Log.d(DNDTAG, "INF: Phone ringing, app enabled.");
@@ -69,15 +70,10 @@ public class DNDCallBlockerReceiver extends BroadcastReceiver {
 
 					// block from list
 					if (prefs.getBoolean("block_list", false)) {
-						initArrays(prefs);						
-						if ((number == null)
-								|| (m_fullnums.indexOf(number) == -1)) {
+						if ((number == null) || !isOnBlackList(number, prefs)) {
 							// unknown number or
 							// black list is on, but doesn't contains this
 							// number
-							
-							// TODO: add handling of contains, end with, start with rules...
-							
 							Log.d(DNDTAG, "INF: Unknown or not on black list.");
 							return;
 						}
@@ -109,7 +105,7 @@ public class DNDCallBlockerReceiver extends BroadcastReceiver {
 					return;
 				}
 			}
-			
+
 			Log.d(DNDTAG, "INF: Start service.");
 
 			// we have to block this call...
@@ -133,29 +129,83 @@ public class DNDCallBlockerReceiver extends BroadcastReceiver {
 		}
 		return starred;
 	}
-	
+
+	// initializes black list arrays
 	private void initArrays(SharedPreferences prefs) {
 		m_contains = new ArrayList<String>();
 		m_startswith = new ArrayList<String>();
 		m_endswith = new ArrayList<String>();
 		m_fullnums = new String("");
-		
+
 		String tmp_phones = prefs.getString(BLACKLIST_PREF, "");
 		String[] tmp_phonesArr = tmp_phones.split(", ");
-		for (String s:tmp_phonesArr) {
+		for (String s : tmp_phonesArr) {
 			if (s.trim().startsWith("*") && s.trim().endsWith("*")) {
 				// send to 'contains array'
-				m_contains.add(s.substring(1, s.trim().length()-1));
+				m_contains.add(s.substring(1, s.trim().length() - 1));
 			} else if (s.trim().startsWith("*")) {
-				// send to 'ends with array' 
+				// send to 'ends with array'
 				m_endswith.add(s.substring(1, s.trim().length()));
 			} else if (s.trim().endsWith("*")) {
 				// send to 'starts with array'
-				m_startswith.add(s.substring(0, s.trim().length()-1));
+				m_startswith.add(s.substring(0, s.trim().length() - 1));
 			} else {
 				// full number
 				m_fullnums += ", " + s.trim();
 			}
 		}
+	}
+
+	// returns true if given number starts with one of the prefixes
+	private boolean isNumStartsWith(String number) {
+		boolean result = false;
+		for (String s : m_startswith) {
+			if ((!result) && (number.startsWith(s.trim()))) {
+				result = true;
+			}
+		}
+		return result;
+	}
+
+	// returns true is given number contains the string saved in preferences
+	private boolean isNumContains(String number) {
+		boolean result = false;
+		for (String s : m_contains) {
+			if ((!result) && (number.contains(s.trim()))) {
+				result = true;
+			}
+		}
+		return result;
+	}
+
+	// returns true is given number ends with the saved postfixes
+	private boolean isNumEndsWith(String number) {
+		boolean result = false;
+		for (String s : m_endswith) {
+			if ((!result) && (number.endsWith(s.trim()))) {
+				result = true;
+			}
+		}
+		return result;
+	}
+
+	// returns true is phone number is on black list
+	private boolean isOnBlackList(String number, SharedPreferences prefs) {
+		boolean result = false;
+		initArrays(prefs);
+		if (m_fullnums.indexOf(number) != -1) {
+			result = true;
+			Log.d(DNDTAG, "INF: Number found on black list (full num).");
+		} else if (isNumStartsWith(number)) {
+			result = true;
+			Log.d(DNDTAG, "INF: Number found on black list (starts with).");
+		} else if (isNumContains(number)) {
+			result = true;
+			Log.d(DNDTAG, "INF: Number found on black list (contains).");
+		} else if (isNumEndsWith(number)) {
+			result = true;
+			Log.d(DNDTAG, "INF: Number found on black list (ends with).");
+		}
+		return result;
 	}
 }
