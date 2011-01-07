@@ -28,6 +28,7 @@ import android.app.IntentService;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.media.AudioManager;
 import android.preference.PreferenceManager;
 import android.telephony.TelephonyManager;
 import android.util.Log;
@@ -86,8 +87,10 @@ public class DNDCallBlockerIntentService extends IntentService {
 		Log.d(DNDTAG, "SRV: pref=".concat(handle_call));
 
 		// Silence the ringer first
-		telephonyService.silenceRinger();
-
+		AudioManager am = (AudioManager) this.getSystemService(Context.AUDIO_SERVICE);
+		int old_mode = am.getRingerMode();
+		am.setRingerMode(AudioManager.RINGER_MODE_SILENT);
+		
 		if (handle_call.equals("block")) {
 			Log.d(DNDTAG, "SRV: Block");
 			// just block the call
@@ -105,5 +108,9 @@ public class DNDCallBlockerIntentService extends IntentService {
 			return;
 		}
 		// phone is still ringing... but in silence
+		
+		// restore saved audio state
+		Thread.sleep(1500);		
+		am.setRingerMode(old_mode);
 	}
 }
