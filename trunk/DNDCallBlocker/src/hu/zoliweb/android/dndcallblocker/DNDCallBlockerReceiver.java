@@ -159,9 +159,17 @@ public class DNDCallBlockerReceiver extends BroadcastReceiver {
 	// returns true if given number starts with one of the prefixes
 	private boolean isNumStartsWith(String number) {
 		boolean result = false;
+		int startIndex = 0;
 		for (String s : m_startswith) {
-			if ((!result) && (number.startsWith(s.trim()))) {
-				result = true;
+			if (!result) {
+				if ((number.charAt(0) == '+') && (s.charAt(0) != '+')) {
+					startIndex = 1;
+				} else {
+					startIndex = 0;
+				}
+				if (number.startsWith(s.trim(), startIndex)) {
+					result = true;
+				}
 			}
 		}
 		return result;
