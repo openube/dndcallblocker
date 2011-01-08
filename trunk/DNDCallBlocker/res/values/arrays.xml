@@ -44,6 +44,7 @@ along with DND Call Blocker.  If not, see <http://www.gnu.org/licenses/>.
 		<!-- FIXME: enable this when works correctly <item>answer_then_block</item> -->
 	</string-array>
 	<string-array name="manual_phonenumber_types">
+		<item>Exactly</item>
 		<item>Start with...</item>
 		<item>Contains...</item>
 		<item>End with...</item>

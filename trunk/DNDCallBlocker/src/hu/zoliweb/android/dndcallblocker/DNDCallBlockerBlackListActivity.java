@@ -64,6 +64,7 @@ public class DNDCallBlockerBlackListActivity extends ListActivity {
 	private ArrayAdapter<String> m_adapter;
 	private SharedPreferences settings;
 	private int checkedItem;
+	private Context myContext;
 
 	/**
 	 * Called when the activity is first created. Responsible for initializing
@@ -73,7 +74,7 @@ public class DNDCallBlockerBlackListActivity extends ListActivity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		Context myContext = this;
+		myContext = this;
 		settings = PreferenceManager.getDefaultSharedPreferences(myContext);
 
 		setContentView(R.layout.blacklist_main);
@@ -218,63 +219,64 @@ public class DNDCallBlockerBlackListActivity extends ListActivity {
 	public void addPhoneNumber(View target) {
 		final AlertDialog.Builder alert = new AlertDialog.Builder(this);
 		final EditText input = new EditText(this);
-		
+
 		checkedItem = 0;
-		
+
 		input.setInputType(InputType.TYPE_CLASS_PHONE);
-		
-		//TODO: add above string to resources...
-		//input.setHint("type number here");
-		
-		alert.setSingleChoiceItems(R.array.manual_phonenumber_types, 0, new DialogInterface.OnClickListener() {
-		    public void onClick(DialogInterface dialog, int item) {
-		    	checkedItem = item;
-		    }
-		});
-		
+
+		input.setHint(R.string.hint_typehere);
+
+		alert.setSingleChoiceItems(R.array.manual_phonenumber_types, 0,
+				new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int item) {
+						checkedItem = item;
+					}
+				});
+
 		alert.setView(input);
 		alert.setIcon(R.drawable.icon);
 		alert.setTitle(R.string.title_add_number);
-		
-		//FIXME: not allow to add blank input
-		alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+
+		alert.setPositiveButton(R.string.message_ok, new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int whichButton) {
 				String value = input.getText().toString().trim();
-				switch (checkedItem) {
-				case 0:
-					value = value.trim() + "*";
-					break;
-				case 1:
-					value = "*"+value.trim()+"*";
-					break;
-				case 2:
-					value = "*"+value.trim();
-					break;
+				if (!value.equals("")) {
+					switch (checkedItem) {
+					case 1:
+						value = value.trim() + "*";
+						break;
+					case 2:
+						value = "*" + value.trim() + "*";
+						break;
+					case 3:
+						value = "*" + value.trim();
+						break;
 
-				default:
-					break;
+					default:
+						break;
+					}
+					// put input to list
+					m_phones.add(value);
+					m_contacts.add("N/A");
+
+					// add new item to list
+					String tmp_phones = m_phones.toString();
+					tmp_phones = tmp_phones.substring(1,
+							tmp_phones.length() - 1);
+					// save to sharedpreferences
+					SharedPreferences.Editor editor = settings.edit();
+					editor.putString(BLACKLIST_PREF, tmp_phones);
+					editor.commit();
+					// refresh ui
+					m_adapter.notifyDataSetChanged();
+					// inform user
+					String toast_text = getString(R.string.phone_added);
+					Toast.makeText(getApplicationContext(), toast_text,
+							Toast.LENGTH_SHORT).show();
 				}
-				// put input to list
-				m_phones.add(value);
-				m_contacts.add("N/A");
-
-				// add new item to list
-				String tmp_phones = m_phones.toString();
-				tmp_phones = tmp_phones.substring(1,
-						tmp_phones.length() - 1);
-				// save to sharedpreferences
-				SharedPreferences.Editor editor = settings.edit();
-				editor.putString(BLACKLIST_PREF, tmp_phones);
-				editor.commit();
-				// refresh ui
-				m_adapter.notifyDataSetChanged();
-				// inform user
-				String toast_text = getString(R.string.phone_added);
-				Toast.makeText(getApplicationContext(), toast_text,
-						Toast.LENGTH_SHORT).show();
 			}
 		});
-		alert.setNegativeButton("Cancel",
+		alert.setNegativeButton(R.string.message_cancel,
 				new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int whichButton) {
 						dialog.cancel();

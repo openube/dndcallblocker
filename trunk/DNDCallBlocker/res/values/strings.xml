@@ -55,5 +55,10 @@ along with DND Call Blocker.  If not, see <http://www.gnu.org/licenses/>.
 	<string name="phone_added">Phone number added</string>
 	<string name="phone_removed">Phone number removed</string>
 	
+	<string name="hint_typehere">Type number here...</string>	
+	
+	<string name="message_ok">OK</string>
+	<string name="message_cancel">Cancel</string>	
+	
 	<string name="donate_message">Thanks for considering to donate this application. Tap the OK button to go to the PayPal donation page. You can also send donations to the <b>donate@zoliweb.hu</b> email address using PayPal or MoneyBookers.</string>
 </resources>
