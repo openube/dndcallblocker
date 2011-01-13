@@ -129,6 +129,12 @@ public class DNDCallBlockerReceiver extends BroadcastReceiver {
 		}
 		return starred;
 	}
+	
+	// cut out special chars from saved numbers
+	private String normalizePhoneNum(String s) {
+		s = s.replaceAll("[^0123456789]", "");
+		return s;
+	}
 
 	// initializes black list arrays
 	private void initArrays(SharedPreferences prefs) {
@@ -142,16 +148,16 @@ public class DNDCallBlockerReceiver extends BroadcastReceiver {
 		for (String s : tmp_phonesArr) {
 			if (s.trim().startsWith("*") && s.trim().endsWith("*")) {
 				// send to 'contains array'
-				m_contains.add(s.substring(1, s.trim().length() - 1));
+				m_contains.add(normalizePhoneNum(s.substring(1, s.trim().length() - 1)));
 			} else if (s.trim().startsWith("*")) {
 				// send to 'ends with array'
-				m_endswith.add(s.substring(1, s.trim().length()));
+				m_endswith.add(normalizePhoneNum(s.substring(1, s.trim().length())));
 			} else if (s.trim().endsWith("*")) {
 				// send to 'starts with array'
-				m_startswith.add(s.substring(0, s.trim().length() - 1));
+				m_startswith.add(normalizePhoneNum(s.substring(0, s.trim().length() - 1)));
 			} else {
 				// full number
-				m_fullnums += ", " + s.trim();
+				m_fullnums += ", " + normalizePhoneNum(s.trim());
 			}
 		}
 	}
