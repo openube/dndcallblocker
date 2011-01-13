@@ -87,15 +87,15 @@ public class DNDCallBlockerIntentService extends IntentService {
 		Log.d(DNDTAG, "SRV: pref=".concat(handle_call));
 
 		// Silence the ringer first
-		AudioManager am = (AudioManager) this.getSystemService(Context.AUDIO_SERVICE);
+		AudioManager am = (AudioManager) this
+				.getSystemService(Context.AUDIO_SERVICE);
 		int old_mode = am.getRingerMode();
 		am.setRingerMode(AudioManager.RINGER_MODE_SILENT);
-		
+
 		if (handle_call.equals("block")) {
 			Log.d(DNDTAG, "SRV: Block");
 			// just block the call
 			telephonyService.endCall();
-			return;
 		}
 
 		// FIXME: sometimes just answer, but never hang up
@@ -105,12 +105,19 @@ public class DNDCallBlockerIntentService extends IntentService {
 			telephonyService.answerRingingCall();
 			// then end the call
 			telephonyService.endCall();
-			return;
 		}
-		// phone is still ringing... but in silence
-		
+
+		// if handling mode was silence, we have to wait the phone to stop
+		// ringing
+		// if handling mode was block, TelephonyManager.CALL_STATE_RINGING will
+		// be false, ringer mode will be restored immediately
+		while (tm.getCallState() == TelephonyManager.CALL_STATE_RINGING) {
+			Thread.sleep(200);
+		}
+
 		// restore saved audio state
-		Thread.sleep(1500);		
 		am.setRingerMode(old_mode);
+
+		return;
 	}
 }
