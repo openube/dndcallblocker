@@ -70,7 +70,9 @@ public class DNDCallBlockerReceiver extends BroadcastReceiver {
 
 					// block from list
 					if (prefs.getBoolean("block_list", false)) {
-						if ((number == null) || !isOnBlackList(number, prefs)) {
+						if ((number == null)
+								|| !isOnBlackList(normalizePhoneNum(number),
+										prefs)) {
 							// unknown number or
 							// black list is on, but doesn't contains this
 							// number
@@ -129,7 +131,7 @@ public class DNDCallBlockerReceiver extends BroadcastReceiver {
 		}
 		return starred;
 	}
-	
+
 	// cut out special chars from saved numbers
 	private String normalizePhoneNum(String s) {
 		s = s.replaceAll("[^0123456789]", "");
@@ -148,13 +150,16 @@ public class DNDCallBlockerReceiver extends BroadcastReceiver {
 		for (String s : tmp_phonesArr) {
 			if (s.trim().startsWith("*") && s.trim().endsWith("*")) {
 				// send to 'contains array'
-				m_contains.add(normalizePhoneNum(s.substring(1, s.trim().length() - 1)));
+				m_contains.add(normalizePhoneNum(s.substring(1, s.trim()
+						.length() - 1)));
 			} else if (s.trim().startsWith("*")) {
 				// send to 'ends with array'
-				m_endswith.add(normalizePhoneNum(s.substring(1, s.trim().length())));
+				m_endswith.add(normalizePhoneNum(s.substring(1, s.trim()
+						.length())));
 			} else if (s.trim().endsWith("*")) {
 				// send to 'starts with array'
-				m_startswith.add(normalizePhoneNum(s.substring(0, s.trim().length() - 1)));
+				m_startswith.add(normalizePhoneNum(s.substring(0, s.trim()
+						.length() - 1)));
 			} else {
 				// full number
 				m_fullnums += ", " + normalizePhoneNum(s.trim());
@@ -165,15 +170,9 @@ public class DNDCallBlockerReceiver extends BroadcastReceiver {
 	// returns true if given number starts with one of the prefixes
 	private boolean isNumStartsWith(String number) {
 		boolean result = false;
-		int startIndex = 0;
 		for (String s : m_startswith) {
 			if (!result) {
-				if ((number.charAt(0) == '+') && (s.charAt(0) != '+')) {
-					startIndex = 1;
-				} else {
-					startIndex = 0;
-				}
-				if (number.startsWith(s.trim(), startIndex)) {
+				if (number.startsWith(s.trim())) {
 					result = true;
 				}
 			}
