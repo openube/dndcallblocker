@@ -23,11 +23,13 @@
 package hu.zoliweb.android.dndcallblocker;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 
 import android.app.IntentService;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.media.AudioManager;
 import android.preference.PreferenceManager;
 import android.telephony.TelephonyManager;
@@ -103,6 +105,7 @@ public class DNDCallBlockerIntentService extends IntentService {
 		if (handle_call.equals("answer_then_block")) {
 			// pick up the phone
 			telephonyService.answerRingingCall();
+			Thread.sleep(250);
 			// then end the call
 			telephonyService.endCall();
 		}
@@ -118,6 +121,58 @@ public class DNDCallBlockerIntentService extends IntentService {
 		// restore saved audio state
 		am.setRingerMode(old_mode);
 
+		// wait 2 sec, then delete last call from phone history
+		Thread.sleep(2000);
+		deleteLastCall(context);
+
 		return;
+	}
+
+	private boolean deleteLastCall(Context context) {
+		boolean isDeleted = false;
+		// Load the calls Log data via context calls Content resolver
+		android.database.Cursor c = context.getContentResolver().query(
+				android.provider.CallLog.Calls.CONTENT_URI, null, null, null,
+				android.provider.CallLog.Calls.DATE + " DESC");
+		ArrayList<CallRecord> CallRecordsList = new ArrayList<CallRecord>();
+		// Retrieve the column-indices of phoneNumber, date and calltype
+		Cursor cursor = c;
+		if (cursor.moveToFirst()) {
+			while (!cursor.isAfterLast()) {
+				// Load attributes of last call
+				CallRecord CallRecords = LoadCallRecord(cursor);
+				CallRecordsList.add(CallRecords);
+				cursor.moveToNext();
+			}
+		}
+		if (CallRecordsList.size() > 0) {
+			int deletedRows = context.getContentResolver().delete(
+					android.provider.CallLog.Calls.CONTENT_URI,
+					"_ID=" + CallRecordsList.get(0).row_id, null);
+			if (deletedRows > 0)
+				isDeleted = true;
+			else
+				isDeleted = false;
+			Log.d(DNDTAG, "Row Deleted status: " + isDeleted);
+		}
+		return isDeleted;
+	}
+
+	private CallRecord LoadCallRecord(Cursor cursor) {
+		CallRecord contactData = new CallRecord();
+		String[] ColumnNames = cursor.getColumnNames();
+		for (int intLoop = 0; intLoop < ColumnNames.length; intLoop++) {
+			// Load id of Last call
+			if (android.provider.CallLog.Calls._ID
+					.compareTo(ColumnNames[intLoop]) == 0)
+				contactData.row_id = cursor.getString(intLoop);
+		}
+
+		return contactData;
+	}
+
+	class CallRecord {
+		public String row_id;
+
 	}
 }
