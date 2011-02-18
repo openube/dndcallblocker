@@ -22,6 +22,11 @@ along with DND Call Blocker.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
 <resources>
+	<string-array name="infomenu_items">
+		<item>Programról</item>
+		<item>Liszensz</item>
+		<item>Támogatás</item>
+	</string-array>
 	<string-array name="number_exceptions">
     	<item>Nincs kivétel</item>
     	<item>Kivéve mentett számok</item>
@@ -35,16 +40,12 @@ along with DND Call Blocker.  If not, see <http://www.gnu.org/licenses/>.
 	<string-array name="handle_call">
     	<item>Némítás</item>
     	<item>Automatikus elutasítás</item>
-    	<!-- FIXME: enable this when works correctly
-    	<item>Answer the call then block</item>
-    	-->
+    	<item>Vegye fel és tegye le</item>
    	</string-array>
 	<string-array name="handle_call_values">
     	<item>silence</item>
        	<item>block</item>
-       	<!-- FIXME: enable this when works correctly
     	<item>answer_then_block</item>
-    	-->
 	</string-array>
 	<string-array name="manual_phonenumber_types">
 		<item>Pontos szám</item>

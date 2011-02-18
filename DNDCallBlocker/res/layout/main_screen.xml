@@ -21,15 +21,19 @@ You should have received a copy of the GNU General Public License
 along with DND Call Blocker.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
-<LinearLayout 
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:admob="http://schemas.android.com/apk/res/hu.zoliweb.android.dndcallblocker"
-        
+<TabHost xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:admob="http://schemas.android.com/apk/res/hu.zoliweb.android.dndcallblocker"
+    android:id="@android:id/tabhost"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
+    <LinearLayout
         android:orientation="vertical"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
->
-
+        android:layout_height="fill_parent">
+        <TabWidget
+            android:id="@android:id/tabs"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content" />
         <com.admob.android.ads.AdView
                 android:id="@+id/ad"
                 android:layout_width="fill_parent"
@@ -38,14 +42,9 @@ along with DND Call Blocker.  If not, see <http://www.gnu.org/licenses/>.
                 admob:primaryTextColor="#FFFFFF"
                 admob:secondaryTextColor="#CCCCCC"
         />
-
-        <ListView 
-                android:id="@android:id/list"
-            android:layout_width="fill_parent" 
-            android:layout_height="fill_parent"
-            android:drawSelectorOnTop="false"
-            android:scrollbarAlwaysDrawVerticalTrack="true"
-    />
-
-</LinearLayout>
-
+        <FrameLayout
+            android:id="@android:id/tabcontent"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"/>
+    </LinearLayout>
+</TabHost>

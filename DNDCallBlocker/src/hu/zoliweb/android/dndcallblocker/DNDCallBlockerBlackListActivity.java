@@ -77,7 +77,7 @@ public class DNDCallBlockerBlackListActivity extends ListActivity {
 		myContext = this;
 		settings = PreferenceManager.getDefaultSharedPreferences(myContext);
 
-		setContentView(R.layout.blacklist_main);
+		setContentView(R.layout.blacklist);
 
 		m_Inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		m_phones = new ArrayList<String>();
@@ -109,14 +109,14 @@ public class DNDCallBlockerBlackListActivity extends ListActivity {
 		}
 
 		// this adapter makes the black list visible to user
-		m_adapter = new ArrayAdapter<String>(this, R.layout.list_item, m_phones) {
+		m_adapter = new ArrayAdapter<String>(this, R.layout.blacklist_list_item, m_phones) {
 			@Override
 			public View getView(int position, View reusableView,
 					ViewGroup parent) {
 				View row;
 
 				if (reusableView == null) {
-					row = m_Inflater.inflate(R.layout.list_item, null);
+					row = m_Inflater.inflate(R.layout.blacklist_list_item, null);
 				} else {
 					row = reusableView;
 				}

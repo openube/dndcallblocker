@@ -54,8 +54,8 @@ public class DNDCallBlockerNotifier {
 	}
 	
 	private void enableNotification() {
-		// Intent to call to turn off DNDCallBlocker
-		Intent notificationIntent = new Intent(mContext, DNDCallBlockerPreferenceActivity.class);
+		// Intent to display DNDCallBlocker
+		Intent notificationIntent = new Intent(mContext, DNDCallBlockerMainActivity.class);
 		PendingIntent pendingIntent = PendingIntent.getActivity(mContext, 0, notificationIntent, 0);
 		
 		// Create the notification
