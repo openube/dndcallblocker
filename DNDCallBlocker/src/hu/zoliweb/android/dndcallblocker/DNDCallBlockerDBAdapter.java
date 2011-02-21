@@ -75,12 +75,16 @@ public class DNDCallBlockerDBAdapter {
 		// Insert the row.
 		return db.insert(TABLE_NAME, null, newLogValues);
 	}
-	
+
 	public Cursor getAllLogCursor() {
-	    return db.query(TABLE_NAME, 
-	                    new String[] { KEY_ID, KEY_PHONENR, KEY_CREATION_DATE}, 
-	                    null, null, null, null, null);
-	  }
+		return db.query(TABLE_NAME, new String[] { KEY_ID, KEY_PHONENR,
+				KEY_CREATION_DATE }, null, null, null, null, null);
+	}
+
+	public void clearAllItems() {
+		// delete all records
+		db.delete(TABLE_NAME, null, null);
+	}
 
 	private static class toDoDBOpenHelper extends SQLiteOpenHelper {
 

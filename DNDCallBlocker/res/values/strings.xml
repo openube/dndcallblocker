@@ -65,5 +65,7 @@ along with DND Call Blocker.  If not, see <http://www.gnu.org/licenses/>.
 	
 	<string name="donate_message">Thanks for considering to donate this application. Tap the OK button to go to the PayPal donation page. You can also send donations to the <b>donate@zoliweb.hu</b> email address using PayPal or MoneyBookers.</string>
 	
+	<string name="log_clear">Clear log</string>
 	<string name="text_unknownnr">Unknown caller</string>
+	<string name="text_today">today</string>
 </resources>

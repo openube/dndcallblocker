@@ -64,5 +64,7 @@ along with DND Call Blocker.  If not, see <http://www.gnu.org/licenses/>.
 	
 	<string name="donate_message">Ha elégedett a program használatával és támogatni szeretné a további fejlesztéseket, válassza az OK gombot a PayPal támogatói oldal eléréséhez. Támogatást közvetlenül a <b>donate@zoliweb.hu</b> email címen is fogadunk PayPal vagy MoneyBookers rendszeren keresztül.</string>
 	
+	<string name="log_clear">Napló törlése</string>
 	<string name="text_unknownnr">Ismeretlen hívó</string>
+	<string name="text_today">ma</string>
 </resources>
