@@ -56,9 +56,17 @@ public class DNDCallBlockerLogItemAdapter extends
 		if (phoneNrString.equals("")) {
 			phoneNrString = context.getString(R.string.text_unknownnr);
 		}
+
+		String dateString = new String("");
 		Date createdDate = item.getCreated();
-		String dateString = DateFormat.getDateTimeInstance()
-				.format(createdDate);
+		Date today = new Date(java.lang.System.currentTimeMillis());
+		if (DateFormat.getDateInstance().format(today)
+				.equals(DateFormat.getDateInstance().format(createdDate))) {
+			dateString = context.getString(R.string.text_today) + ", "
+					+ DateFormat.getTimeInstance().format(createdDate);
+		} else {
+			dateString = DateFormat.getDateTimeInstance().format(createdDate);
+		}
 
 		if (convertView == null) {
 			todoView = new LinearLayout(getContext());

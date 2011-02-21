@@ -28,6 +28,9 @@ import java.util.Date;
 import android.app.Activity;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.widget.ListView;
 
 public class DNDCallBlockerLogActivity extends Activity {
@@ -88,6 +91,27 @@ public class DNDCallBlockerLogActivity extends Activity {
 		super.onDestroy();
 		// Close the database
 		logDBAdapter.close();
+	}
+	
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+	    MenuInflater inflater = getMenuInflater();
+	    inflater.inflate(R.menu.log_menu, menu);
+	    return true;
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+	    // Handle item selection
+	    switch (item.getItemId()) {
+	    case R.id.log_clear:
+	        logDBAdapter.clearAllItems();
+	        updateArray();
+	        lia.notifyDataSetChanged();
+	        return true;
+	    default:
+	        return super.onOptionsItemSelected(item);
+	    }
 	}
 
 }
