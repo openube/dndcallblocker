@@ -43,8 +43,6 @@ public class DNDCallBlockerReceiver extends BroadcastReceiver {
 	private ArrayList<String> m_endswith;
 	private ArrayList<String> m_contains;
 	private String m_fullnums;
-	
-	DNDCallBlockerDBAdapter logDBAdapter;
 
 	@Override
 	public void onReceive(Context context, Intent intent) {
@@ -114,19 +112,10 @@ public class DNDCallBlockerReceiver extends BroadcastReceiver {
 
 			// we have to block this call...
 			// Call a service, since this could take a few seconds
-			context.startService(new Intent(context,
-					DNDCallBlockerIntentService.class));
-			
-			// save to history
-			logDBAdapter = new DNDCallBlockerDBAdapter(context);
-			logDBAdapter.open();
-			if (number != null)
-			{
-				logDBAdapter.insertToLog(number.trim());
-			} else {
-				logDBAdapter.insertToLog("");
-			}
-            logDBAdapter.close();
+			Intent dndService = new Intent(context,
+					DNDCallBlockerIntentService.class);
+			dndService.putExtra("phone_nr", number);
+			context.startService(dndService);
 		}
 	}
 

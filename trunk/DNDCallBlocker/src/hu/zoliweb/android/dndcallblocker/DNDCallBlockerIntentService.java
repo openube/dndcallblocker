@@ -39,6 +39,9 @@ import com.android.internal.telephony.ITelephony;
 
 public class DNDCallBlockerIntentService extends IntentService {
 	private static final String DNDTAG = "DNDCallBlocker";
+	private String _phoneNr;
+	
+	DNDCallBlockerDBAdapter logDBAdapter;
 
 	public DNDCallBlockerIntentService() {
 		super("DNDCallBlockerIntentService");
@@ -49,6 +52,8 @@ public class DNDCallBlockerIntentService extends IntentService {
 		Context context = getBaseContext();
 
 		Log.d(DNDTAG, "SRV: Got control.");
+		
+		_phoneNr = intent.getStringExtra("phone_nr");
 
 		// Make sure the phone is still ringing
 		TelephonyManager tm = (TelephonyManager) context
@@ -64,6 +69,26 @@ public class DNDCallBlockerIntentService extends IntentService {
 		} catch (Exception e) {
 			e.printStackTrace();
 			Log.d(DNDTAG, "Error trying to reject using telephony service.");
+		}
+		
+		// save event in call filter log
+		logDBAdapter = new DNDCallBlockerDBAdapter(context);
+		logDBAdapter.open();
+		if (_phoneNr != null)
+		{
+			logDBAdapter.insertToLog(_phoneNr.trim());
+		} else {
+			logDBAdapter.insertToLog("");
+		}
+        logDBAdapter.close();
+		
+		// wait 2 sec, then delete last call from phone history
+		try {
+			Thread.sleep(2000);
+			deleteLastCall(context);
+		} catch (Exception e) {
+			e.printStackTrace();
+			Log.d(DNDTAG, "There was some problem with deleteLastCall procedure.");
 		}
 
 		return;
@@ -91,7 +116,9 @@ public class DNDCallBlockerIntentService extends IntentService {
 		// Silence the ringer first
 		AudioManager am = (AudioManager) this
 				.getSystemService(Context.AUDIO_SERVICE);
+		// save original audio state
 		int old_mode = am.getRingerMode();
+		//set to silent
 		am.setRingerMode(AudioManager.RINGER_MODE_SILENT);
 
 		if (handle_call.equals("block")) {
@@ -105,6 +132,7 @@ public class DNDCallBlockerIntentService extends IntentService {
 		if (handle_call.equals("answer_then_block")) {
 			// pick up the phone
 			telephonyService.answerRingingCall();
+			// maybe some wait will help
 			Thread.sleep(250);
 			// then end the call
 			telephonyService.endCall();
@@ -121,16 +149,13 @@ public class DNDCallBlockerIntentService extends IntentService {
 		// restore saved audio state
 		am.setRingerMode(old_mode);
 
-		// wait 2 sec, then delete last call from phone history
-		Thread.sleep(2000);
-		deleteLastCall(context);
-
 		return;
 	}
 
 	private boolean deleteLastCall(Context context) {
 		boolean isDeleted = false;
 		// Load the calls Log data via context calls Content resolver
+		//TODO: add selection to query
 		android.database.Cursor c = context.getContentResolver().query(
 				android.provider.CallLog.Calls.CONTENT_URI, null, null, null,
 				android.provider.CallLog.Calls.DATE + " DESC");
@@ -160,12 +185,14 @@ public class DNDCallBlockerIntentService extends IntentService {
 
 	private CallRecord LoadCallRecord(Cursor cursor) {
 		CallRecord contactData = new CallRecord();
+		//TODO: needs restructuring
 		String[] ColumnNames = cursor.getColumnNames();
 		for (int intLoop = 0; intLoop < ColumnNames.length; intLoop++) {
 			// Load id of Last call
 			if (android.provider.CallLog.Calls._ID
-					.compareTo(ColumnNames[intLoop]) == 0)
+					.compareTo(ColumnNames[intLoop]) == 0) {
 				contactData.row_id = cursor.getString(intLoop);
+			}
 		}
 
 		return contactData;
@@ -173,6 +200,5 @@ public class DNDCallBlockerIntentService extends IntentService {
 
 	class CallRecord {
 		public String row_id;
-
 	}
 }
