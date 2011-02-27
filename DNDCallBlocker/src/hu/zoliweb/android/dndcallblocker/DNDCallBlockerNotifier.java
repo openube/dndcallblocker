@@ -45,7 +45,7 @@ public class DNDCallBlockerNotifier {
 	}
 
 	public void updateNotification() {
-		if (mSharedPreferences.getBoolean("enabled", false)) {
+		if (mSharedPreferences.getBoolean("enabled", false) && mSharedPreferences.getBoolean("stat_notify", false)) {
 			this.enableNotification();
 		}
 		else {

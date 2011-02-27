@@ -24,10 +24,16 @@ along with DND Call Blocker.  If not, see <http://www.gnu.org/licenses/>.
 	<CheckBoxPreference android:key="enabled"
 		android:title="@string/title_enabled" android:summaryOff="@string/sum_off_enabled"
 		android:summaryOn="@string/sum_on_enabled" />
+	<CheckBoxPreference android:key="stat_notify"
+		android:title="@string/title_stat_notify" android:summaryOff="@string/sum_off_stat_notify"
+		android:summaryOn="@string/sum_on_stat_notify" android:defaultValue="true"/>
 	<PreferenceCategory android:title="@string/title_behaviour">
 		<ListPreference android:key="handle_call"
 			android:title="@string/title_handle_call" android:entries="@array/handle_call"
 			android:entryValues="@array/handle_call_values" android:defaultValue="block" />
+		<CheckBoxPreference android:key="handle_history"
+		android:title="@string/title_handle_history" android:summaryOff="@string/sum_off_history"
+		android:summaryOn="@string/sum_on_history" android:defaultValue="true" />
 	</PreferenceCategory>
 	<PreferenceCategory android:title="@string/title_number_rules">
 		<CheckBoxPreference android:key="block_all"
