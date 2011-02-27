@@ -25,7 +25,10 @@ package hu.zoliweb.android.dndcallblocker;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
+import android.preference.ListPreference;
+import android.preference.Preference;
 import android.preference.PreferenceActivity;
+import android.preference.PreferenceGroup;
 
 public class DNDCallBlockerPreferenceActivity extends PreferenceActivity
 		implements OnSharedPreferenceChangeListener {
@@ -44,6 +47,20 @@ public class DNDCallBlockerPreferenceActivity extends PreferenceActivity
 		sharedPreferences = getPreferenceManager().getSharedPreferences();
 		sharedPreferences.registerOnSharedPreferenceChangeListener(this);
 		addPreferencesFromResource(R.xml.preferences);
+
+		// init summary of listpreferences
+		for (int i = 0; i < getPreferenceScreen().getPreferenceCount(); i++) {
+			Preference pref = getPreferenceScreen().getPreference(i);
+			if (pref instanceof PreferenceGroup) {
+				for (int j = 0; j < ((PreferenceGroup) pref)
+						.getPreferenceCount(); j++) {
+					initListPrefSummary(((PreferenceGroup) pref)
+							.getPreference(j));
+				}
+			} else {
+				initListPrefSummary(pref);
+			}
+		}
 	}
 
 	@Override
@@ -60,8 +77,18 @@ public class DNDCallBlockerPreferenceActivity extends PreferenceActivity
 
 	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences,
 			String key) {
-		if (key.equals("enabled")) {
+		if (key.equals("enabled") || key.equals("stat_notify")) {
 			mNotifier.updateNotification();
+		} else {
+			Preference pref = findPreference(key);
+			initListPrefSummary(pref);
+		}
+	}
+
+	private void initListPrefSummary(Preference pref) {
+		if (pref instanceof ListPreference) {
+			ListPreference listPref = (ListPreference) pref;
+			pref.setSummary(listPref.getEntry());
 		}
 	}
 }
