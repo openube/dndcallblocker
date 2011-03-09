@@ -111,15 +111,8 @@ public class DNDCallBlockerIntentService extends IntentService {
 
 	@SuppressWarnings("rawtypes")
 	private void handlePhoneCall(Context context) throws Exception {
-		// Set up communication with the telephony service (thanks to Tedd's
-		// Droid Tools!)
 		TelephonyManager tm = (TelephonyManager) getSystemService(TELEPHONY_SERVICE);
-		Class c = Class.forName(tm.getClass().getName());
-		Method m = c.getDeclaredMethod("getITelephony");
-		m.setAccessible(true);
-		ITelephony telephonyService;
-		telephonyService = (ITelephony) m.invoke(tm);
-
+		
 		// call handling preference
 		String handle_call = _prefs.getString("handle_call", "silence");
 
@@ -132,22 +125,34 @@ public class DNDCallBlockerIntentService extends IntentService {
 		int old_mode = am.getRingerMode();
 		// set to silent
 		am.setRingerMode(AudioManager.RINGER_MODE_SILENT);
-
-		if (handle_call.equals("block")) {
-			Log.d(DNDTAG, "SRV: Block");
-			// just block the call
-			telephonyService.endCall();
-		}
-
-		// FIXME: sometimes just answer, but never hang up
-		// not used handling mode
-		if (handle_call.equals("answer_then_block")) {
-			// pick up the phone
-			telephonyService.answerRingingCall();
-			// maybe some wait will help
-			Thread.sleep(250);
-			// then end the call
-			telephonyService.endCall();
+		
+		// programmatically call blocking only works up to Froyo 
+		if ( android.os.Build.VERSION.SDK_INT <= android.os.Build.VERSION_CODES.FROYO)
+		{
+			// Set up communication with the telephony service (thanks to Tedd's
+			// Droid Tools!)
+			Class c = Class.forName(tm.getClass().getName());
+			Method m = c.getDeclaredMethod("getITelephony");
+			m.setAccessible(true);
+			ITelephony telephonyService;
+			telephonyService = (ITelephony) m.invoke(tm);
+	
+			if (handle_call.equals("block")) {
+				Log.d(DNDTAG, "SRV: Block");
+				// just block the call
+				telephonyService.endCall();
+			}
+	
+			// FIXME: sometimes just answer, but never hang up
+			// not used handling mode
+			if (handle_call.equals("answer_then_block")) {
+				// pick up the phone
+				telephonyService.answerRingingCall();
+				// maybe some wait will help
+				Thread.sleep(250);
+				// then end the call
+				telephonyService.endCall();
+			}
 		}
 
 		// if handling mode was silence, we have to wait the phone to stop

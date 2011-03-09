@@ -38,7 +38,7 @@ public class DNDCallBlockerMainActivity extends TabActivity {
 
 		// set up adMob test device ID
 		AdManager.setTestDevices(new String[] { AdManager.TEST_EMULATOR,
-				"6182E94BE37CA42E335633ED27BEC91F", });
+				"754F0D98616CB93019187933F97D3E46", });
 
 		setContentView(R.layout.main_screen);
 
