@@ -66,12 +66,8 @@ public class DNDCallBlockerIntentService extends IntentService {
 		}
 
 		// Block the call
-		try {
-			handlePhoneCall(context);
-		} catch (Exception e) {
-			e.printStackTrace();
-			Log.d(DNDTAG, "Error trying to reject using telephony service.");
-		}
+
+		handlePhoneCall(context);
 
 		// save event in call filter log
 		logDBAdapter = new DNDCallBlockerDBAdapter(context);
@@ -89,13 +85,10 @@ public class DNDCallBlockerIntentService extends IntentService {
 			Log.d(DNDTAG, "Trying to delete from history...");
 			try {
 				/*
-				int loopCnt = 0;
-				while (!deleteLastCall(context) && loopCnt < 16) {
-					loopCnt++;
-					Thread.sleep(125);
-				}
-				Log.d(DNDTAG, "History delete loop is over. cnt=" + loopCnt);
-				*/
+				 * int loopCnt = 0; while (!deleteLastCall(context) && loopCnt <
+				 * 16) { loopCnt++; Thread.sleep(125); } Log.d(DNDTAG,
+				 * "History delete loop is over. cnt=" + loopCnt);
+				 */
 				Thread.sleep(2000);
 				deleteLastCall(context);
 				Log.d(DNDTAG, "History delete is over.");
@@ -109,10 +102,9 @@ public class DNDCallBlockerIntentService extends IntentService {
 		return;
 	}
 
-	@SuppressWarnings("rawtypes")
-	private void handlePhoneCall(Context context) throws Exception {
+	private void handlePhoneCall(Context context) {
 		TelephonyManager tm = (TelephonyManager) getSystemService(TELEPHONY_SERVICE);
-		
+
 		// call handling preference
 		String handle_call = _prefs.getString("handle_call", "silence");
 
@@ -125,34 +117,40 @@ public class DNDCallBlockerIntentService extends IntentService {
 		int old_mode = am.getRingerMode();
 		// set to silent
 		am.setRingerMode(AudioManager.RINGER_MODE_SILENT);
-		
-		// programmatically call blocking only works up to Froyo 
-		if ( android.os.Build.VERSION.SDK_INT <= android.os.Build.VERSION_CODES.FROYO)
-		{
-			// Set up communication with the telephony service (thanks to Tedd's
-			// Droid Tools!)
-			Class c = Class.forName(tm.getClass().getName());
-			Method m = c.getDeclaredMethod("getITelephony");
-			m.setAccessible(true);
-			ITelephony telephonyService;
-			telephonyService = (ITelephony) m.invoke(tm);
-	
-			if (handle_call.equals("block")) {
-				Log.d(DNDTAG, "SRV: Block");
-				// just block the call
-				telephonyService.endCall();
+
+		// programmatically call blocking only works up to Froyo
+		try {
+			if (android.os.Build.VERSION.SDK_INT <= android.os.Build.VERSION_CODES.FROYO) {
+				// Set up communication with the telephony service (thanks to
+				// Tedd's
+				// Droid Tools!)
+				@SuppressWarnings("rawtypes")
+				Class c = Class.forName(tm.getClass().getName());
+				Method m = c.getDeclaredMethod("getITelephony");
+				m.setAccessible(true);
+				ITelephony telephonyService;
+				telephonyService = (ITelephony) m.invoke(tm);
+
+				if (handle_call.equals("block")) {
+					Log.d(DNDTAG, "SRV: Block");
+					// just block the call
+					telephonyService.endCall();
+				}
+
+				// FIXME: sometimes just answer, but never hang up
+				// not used handling mode
+				if (handle_call.equals("answer_then_block")) {
+					// pick up the phone
+					telephonyService.answerRingingCall();
+					// maybe some wait will help
+					Thread.sleep(250);
+					// then end the call
+					telephonyService.endCall();
+				}
 			}
-	
-			// FIXME: sometimes just answer, but never hang up
-			// not used handling mode
-			if (handle_call.equals("answer_then_block")) {
-				// pick up the phone
-				telephonyService.answerRingingCall();
-				// maybe some wait will help
-				Thread.sleep(250);
-				// then end the call
-				telephonyService.endCall();
-			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			Log.d(DNDTAG, "Error trying to reject using telephony service.");
 		}
 
 		// if handling mode was silence, we have to wait the phone to stop
@@ -160,7 +158,12 @@ public class DNDCallBlockerIntentService extends IntentService {
 		// if handling mode was block, TelephonyManager.CALL_STATE_RINGING will
 		// be false, ringer mode will be restored immediately
 		while (tm.getCallState() == TelephonyManager.CALL_STATE_RINGING) {
-			Thread.sleep(200);
+			try {
+				Thread.sleep(200);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+				Log.d(DNDTAG, "Interrupted when tried to sleep a bit.");
+			}
 		}
 
 		// restore saved audio state
@@ -176,17 +179,23 @@ public class DNDCallBlockerIntentService extends IntentService {
 		// TODO: improve delete with date selection
 
 		if (_phoneNr != null) {
-			extraQuerySelection = " and " + android.provider.CallLog.Calls.NUMBER + " = '"
-					+ _phoneNr + "'";
+			extraQuerySelection = " and "
+					+ android.provider.CallLog.Calls.NUMBER + " = '" + _phoneNr
+					+ "'";
 		} else {
 			Log.d(DNDTAG, "History delete... phone nr is null");
-			extraQuerySelection = " and " + android.provider.CallLog.Calls.NUMBER
-					+ " in ( '-1', '-2' )"; }
-		 
+			extraQuerySelection = " and "
+					+ android.provider.CallLog.Calls.NUMBER
+					+ " in ( '-1', '-2' )";
+		}
+
 		android.database.Cursor c = context.getContentResolver().query(
-				android.provider.CallLog.Calls.CONTENT_URI, null, 
-				android.provider.CallLog.Calls.TYPE + " in (" + android.provider.CallLog.Calls.INCOMING_TYPE + ", " + android.provider.CallLog.Calls.MISSED_TYPE + " )" + extraQuerySelection
-				, null,
+				android.provider.CallLog.Calls.CONTENT_URI,
+				null,
+				android.provider.CallLog.Calls.TYPE + " in ("
+						+ android.provider.CallLog.Calls.INCOMING_TYPE + ", "
+						+ android.provider.CallLog.Calls.MISSED_TYPE + " )"
+						+ extraQuerySelection, null,
 				android.provider.CallLog.Calls.DATE + " DESC");
 
 		String callRecordRowId = null;
