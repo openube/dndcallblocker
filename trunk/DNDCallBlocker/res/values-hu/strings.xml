@@ -74,4 +74,6 @@ along with DND Call Blocker.  If not, see <http://www.gnu.org/licenses/>.
 	<string name="log_clear">Napló törlése</string>
 	<string name="text_unknownnr">Ismeretlen hívó</string>
 	<string name="text_today">ma</string>
+	
+	<string name="gingerbread_fail">Gingerbread Android verzió esetén a programoknak nincs lehetőségük elutasítani hívásokat, ezért a híváskezelési lehetőségek között csak a \'Némítás\' szerepel.</string>
 </resources>
