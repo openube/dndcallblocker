@@ -75,4 +75,6 @@ along with DND Call Blocker.  If not, see <http://www.gnu.org/licenses/>.
 	<string name="log_clear">Clear log</string>
 	<string name="text_unknownnr">Unknown caller</string>
 	<string name="text_today">today</string>
+	
+	<string name="gingerbread_fail">On Gingerbread, user applications can not end a call programmatically, therefore under call handling mode only \'Silence\' can be selected.</string>
 </resources>

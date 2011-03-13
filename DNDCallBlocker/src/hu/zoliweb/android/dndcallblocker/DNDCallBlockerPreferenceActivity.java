@@ -22,8 +22,12 @@
 
 package hu.zoliweb.android.dndcallblocker;
 
+import android.Manifest;
+import android.app.AlertDialog;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
@@ -35,10 +39,13 @@ public class DNDCallBlockerPreferenceActivity extends PreferenceActivity
 
 	private DNDCallBlockerNotifier mNotifier;
 	private SharedPreferences sharedPreferences;
+	private Context myContext;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
+		myContext = this;
 
 		// status bar notification
 		mNotifier = new DNDCallBlockerNotifier(this);
@@ -60,6 +67,29 @@ public class DNDCallBlockerPreferenceActivity extends PreferenceActivity
 			} else {
 				initListPrefSummary(pref);
 			}
+		}
+
+		if ((!sharedPreferences.getBoolean("wasGBnotify", false))
+				&& (this.checkCallingOrSelfPermission(Manifest.permission.MODIFY_PHONE_STATE) == PackageManager.PERMISSION_DENIED)) {
+
+			// save updated list to sharedpreferences
+			SharedPreferences.Editor editor = sharedPreferences.edit();
+			editor.putBoolean("wasGBnotify", true);
+			editor.commit();
+
+			// prepare the alert box
+			AlertDialog.Builder aboutAlertbox = new AlertDialog.Builder(
+					myContext);
+			// set the icon to display
+			aboutAlertbox.setIcon(R.drawable.icon);
+			// set the title to display
+			aboutAlertbox.setTitle(R.string.app_name);
+			// set the message to display
+			aboutAlertbox.setMessage(R.string.gingerbread_fail);
+			// add a neutral button to the alert box
+			aboutAlertbox.setNeutralButton(R.string.message_ok, null);
+			// show it
+			aboutAlertbox.show();
 		}
 	}
 
