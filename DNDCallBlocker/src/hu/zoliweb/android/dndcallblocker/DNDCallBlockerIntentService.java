@@ -24,10 +24,12 @@ package hu.zoliweb.android.dndcallblocker;
 
 import java.lang.reflect.Method;
 
+import android.Manifest;
 import android.app.IntentService;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.media.AudioManager;
 import android.preference.PreferenceManager;
@@ -118,9 +120,9 @@ public class DNDCallBlockerIntentService extends IntentService {
 		// set to silent
 		am.setRingerMode(AudioManager.RINGER_MODE_SILENT);
 
-		// programmatically call blocking only works up to Froyo
+		// reject only when permission granted
 		try {
-			if (android.os.Build.VERSION.SDK_INT <= android.os.Build.VERSION_CODES.FROYO) {
+			if (this.checkCallingOrSelfPermission(Manifest.permission.MODIFY_PHONE_STATE) == PackageManager.PERMISSION_GRANTED) {
 				// Set up communication with the telephony service (thanks to
 				// Tedd's
 				// Droid Tools!)
