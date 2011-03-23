@@ -107,7 +107,7 @@ public class DNDCallBlockerInfoActivity extends ListActivity {
 									// web page
 									startActivity(new Intent(
 											Intent.ACTION_VIEW,
-											Uri.parse("https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=NF4VH9Y7F4PQS")));
+											Uri.parse("https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=JW4NJ9FTLEE2N")));
 								}
 							});
 
