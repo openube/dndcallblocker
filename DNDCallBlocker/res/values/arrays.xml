@@ -25,7 +25,7 @@ along with DND Call Blocker.  If not, see <http://www.gnu.org/licenses/>.
 	<string-array name="infomenu_items">
 		<item>About</item>
 		<item>License</item>
-		<item>Donate</item>
+		<item>Buy me a coffee!</item>
 	</string-array>
 	<string-array name="number_exceptions">
 		<item>No Exception</item>

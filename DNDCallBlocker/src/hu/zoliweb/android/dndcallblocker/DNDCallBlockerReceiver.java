@@ -66,7 +66,7 @@ public class DNDCallBlockerReceiver extends BroadcastReceiver {
 			if (!prefs.getBoolean("block_all", false)) {
 
 				// block hidden numbers
-				if (!(prefs.getBoolean("block_unknown", false) && number == null)) {
+				if (!(prefs.getBoolean("block_unknown", false) && ( number == null || number.equals("") ))) {
 
 					// block from list
 					if (prefs.getBoolean("block_list", false)) {
