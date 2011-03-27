@@ -24,7 +24,7 @@ along with DND Call Blocker.  If not, see <http://www.gnu.org/licenses/>.
 <resources>
 	<string-array name="handle_call">
     	<item>Némítás</item>
-    	<item>Automatikus elutasítás</item>
+<!--    	<item>Automatikus elutasítás</item>-->
 <!--    	<item>Vegye fel és tegye le</item>-->
    	</string-array>
 </resources>
