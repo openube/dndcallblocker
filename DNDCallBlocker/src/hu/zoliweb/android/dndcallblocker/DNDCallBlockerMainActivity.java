@@ -22,8 +22,6 @@
 
 package hu.zoliweb.android.dndcallblocker;
 
-import com.admob.android.ads.AdManager;
-
 import android.app.TabActivity;
 import android.content.Intent;
 import android.content.res.Resources;
@@ -35,10 +33,6 @@ public class DNDCallBlockerMainActivity extends TabActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
-		// set up adMob test device ID
-		AdManager.setTestDevices(new String[] { AdManager.TEST_EMULATOR,
-				"CF95DC53F383F9A836FD749F3EF439CD", });
 
 		setContentView(R.layout.main_screen);
 
