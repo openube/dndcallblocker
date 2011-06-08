@@ -33,6 +33,7 @@ import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceGroup;
+import android.widget.Toast;
 
 public class DNDCallBlockerPreferenceActivity extends PreferenceActivity
 		implements OnSharedPreferenceChangeListener {
@@ -110,6 +111,15 @@ public class DNDCallBlockerPreferenceActivity extends PreferenceActivity
 		if (key.equals("enabled") || key.equals("stat_notify")) {
 			mNotifier.updateNotification();
 		} else {
+			if (key.equals("handle_call")
+					&& sharedPreferences.getString(key, "silence").equals(
+							"block")
+					&& (this.checkCallingOrSelfPermission(Manifest.permission.MODIFY_PHONE_STATE) == PackageManager.PERMISSION_DENIED)) {
+				// inform user
+				String toast_text = getString(R.string.gingerbread_fail2);
+				Toast.makeText(getApplicationContext(), toast_text,
+						Toast.LENGTH_LONG).show();
+			}
 			Preference pref = findPreference(key);
 			initListPrefSummary(pref);
 		}
