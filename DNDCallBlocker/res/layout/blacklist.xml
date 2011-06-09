@@ -22,16 +22,16 @@ along with DND Call Blocker.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-xmlns:admob="http://schemas.android.com/apk/res/hu.zoliweb.android.dndcallblocker"
+	xmlns:ads="http://schemas.android.com/apk/lib/com.google.ads"
 	android:orientation="vertical" android:layout_width="fill_parent"
 	android:layout_height="fill_parent">
-	<com.admob.android.ads.AdView
+	<com.google.ads.AdView
                 android:id="@+id/ad"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                admob:backgroundColor="#000000"
-                admob:primaryTextColor="#FFFFFF"
-                admob:secondaryTextColor="#CCCCCC"
+                ads:adUnitId="a14c8ccd6f691b1"
+                ads:adSize="BANNER"
+                ads:loadAdOnCreate="true"
         />
 	<LinearLayout android:id="@+id/top_control_bar"
 		android:layout_width="fill_parent" android:layout_height="wrap_content"
