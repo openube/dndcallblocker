@@ -56,6 +56,7 @@ public class DNDCallBlockerBlackListActivity extends ListActivity {
 
 	private static final String TAG = "DNDCallBlockerBlackListActivity";
 	private static final int PICK_CONTACT = 3;
+	private static final int PICK_LOG = 4;
 	private static final String BLACKLIST_PREF = "blacklist";
 
 	private ArrayList<String> m_phones;
@@ -103,6 +104,7 @@ public class DNDCallBlockerBlackListActivity extends ListActivity {
 				} else {
 					m_contacts.add("N/A");
 				}
+				cur.close();
 			}
 		} else {
 			// do nothing, list is empty
@@ -203,8 +205,43 @@ public class DNDCallBlockerBlackListActivity extends ListActivity {
 							Log.e(TAG, e.getMessage());
 						}
 					}
+					c.close();
 				}
-			}
+			} break;
+		case (PICK_LOG):
+			if (resultCode == Activity.RESULT_OK) {
+				String numtoadd = data.getAction();
+				m_phones.add(numtoadd);
+				// search contact for every saved phone number
+				ContentResolver cr = getContentResolver();
+				Uri uri = Uri.withAppendedPath(PhoneLookup.CONTENT_FILTER_URI,
+						Uri.encode(numtoadd));
+				Cursor cur = cr.query(uri,
+						new String[] { PhoneLookup.DISPLAY_NAME }, null, null,
+						null);
+				if (cur.moveToFirst()) {
+					String name = cur.getString(cur
+							.getColumnIndex(PhoneLookup.DISPLAY_NAME));
+					m_contacts.add(name);
+				} else {
+					m_contacts.add("N/A");
+				}
+				cur.close();
+				// add new item to list
+				String tmp_phones = m_phones.toString();
+				tmp_phones = tmp_phones.substring(1,
+						tmp_phones.length() - 1);
+				// save to sharedpreferences
+				SharedPreferences.Editor editor = settings.edit();
+				editor.putString(BLACKLIST_PREF, tmp_phones);
+				editor.commit();
+				// refresh ui
+				m_adapter.notifyDataSetChanged();
+				// inform user
+				String toast_text = getString(R.string.phone_added);
+				Toast.makeText(getApplicationContext(), toast_text,
+						Toast.LENGTH_SHORT).show();
+			} break;
 		}
 	}
 
@@ -283,6 +320,12 @@ public class DNDCallBlockerBlackListActivity extends ListActivity {
 					}
 				});
 		alert.show();
+	}
+	
+	public void pickFromCallLog(View target) {
+		// start callog list activity to pick one phone number
+		Intent intent = new Intent(DNDCallBlockerBlackListActivity.this, DNDCallBlockerCallogListActivity.class);
+		startActivityForResult(intent, PICK_LOG);
 	}
 
 }
