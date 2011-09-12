@@ -41,6 +41,12 @@ along with DND Call Blocker.  If not, see <http://www.gnu.org/licenses/>.
 		<Button android:layout_width="wrap_content"
 			android:layout_height="wrap_content" android:text="@string/title_add_number" android:onClick="addPhoneNumber"/>
 	</LinearLayout>
+	<LinearLayout android:id="@+id/top_control_bar2"
+		android:layout_width="fill_parent" android:layout_height="wrap_content"
+		android:layout_alignParentBottom="true" android:gravity="center">
+		<Button android:layout_width="wrap_content"
+			android:layout_height="wrap_content" android:text="@string/title_add_fromlog" android:onClick="pickFromCallLog"/>
+	</LinearLayout>
 	<ListView android:layout_width="fill_parent"
 		android:layout_height="wrap_content" android:id="@android:id/list" android:headerDividersEnabled="true"></ListView>
 </LinearLayout>
