@@ -132,8 +132,11 @@ public class DNDCallBlockerCallogListActivity extends ListActivity {
 				TextView tv2 = (TextView) row.findViewById(android.R.id.text2);
 				tv2.setText(contactName);
 
-				ImageView iv1 = (ImageView) row.findViewById(R.id.imageview1);
-				iv1.setImageResource(m_types.get(position));
+				if ( m_types.get(position) != null ) {
+					// only if call type is known (m_types.get(position) is not null) 
+					ImageView iv1 = (ImageView) row.findViewById(R.id.imageview1);
+					iv1.setImageResource(m_types.get(position));
+				}
 
 				return row;
 			}
