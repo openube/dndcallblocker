@@ -33,6 +33,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -78,7 +79,14 @@ public class DNDCallBlockerBlackListActivity extends ListActivity {
 		myContext = this;
 		settings = PreferenceManager.getDefaultSharedPreferences(myContext);
 
-		setContentView(R.layout.blacklist);
+		PackageManager manager = getPackageManager();
+		if (manager.checkSignatures("hu.zoliweb.android.dndcallblocker", "hu.zoliweb.android.dndcallblocker.key")
+		    == PackageManager.SIGNATURE_MATCH) {
+			setContentView(R.layout.noad_blacklist);
+		} else {
+			setContentView(R.layout.blacklist);
+		}
+		
 
 		m_Inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		m_phones = new ArrayList<String>();
