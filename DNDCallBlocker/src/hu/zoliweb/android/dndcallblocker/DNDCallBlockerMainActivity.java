@@ -24,6 +24,7 @@ package hu.zoliweb.android.dndcallblocker;
 
 import android.app.TabActivity;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.widget.TabHost;
@@ -33,8 +34,15 @@ public class DNDCallBlockerMainActivity extends TabActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
-		setContentView(R.layout.main_screen);
+		
+		PackageManager manager = getPackageManager();
+		if (manager.checkSignatures("hu.zoliweb.android.dndcallblocker", "hu.zoliweb.android.dndcallblocker.key")
+		    == PackageManager.SIGNATURE_MATCH) {
+			setContentView(R.layout.noad_main_screen);
+		} else {
+			setContentView(R.layout.main_screen);
+		}
+		
 
 		Resources res = getResources(); // Resource object to get Drawables
 		TabHost tabHost = getTabHost(); // The activity TabHost
@@ -71,6 +79,7 @@ public class DNDCallBlockerMainActivity extends TabActivity {
 		tabHost.addTab(spec);
 
 		tabHost.setCurrentTab(0);
+
 	}
 
 }

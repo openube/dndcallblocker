@@ -28,6 +28,7 @@ import android.app.ListActivity;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -60,7 +61,13 @@ public class DNDCallBlockerCallogListActivity extends ListActivity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		setContentView(R.layout.callog_list);
+		PackageManager manager = getPackageManager();
+		if (manager.checkSignatures("hu.zoliweb.android.dndcallblocker", "hu.zoliweb.android.dndcallblocker.key")
+		    == PackageManager.SIGNATURE_MATCH) {
+			setContentView(R.layout.noad_callog_list);
+		} else {
+			setContentView(R.layout.callog_list);
+		}
 
 		m_Inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		m_phones = new ArrayList<String>();
@@ -74,7 +81,7 @@ public class DNDCallBlockerCallogListActivity extends ListActivity {
 			do {
 				String num = c
 						.getString(c.getColumnIndex(CallLog.Calls.NUMBER));
-				if (num.length() > 2) {
+				if (num != null && num.length() > 2) {
 					m_phones.add(num);
 
 					switch (Integer.parseInt(c.getString(c
