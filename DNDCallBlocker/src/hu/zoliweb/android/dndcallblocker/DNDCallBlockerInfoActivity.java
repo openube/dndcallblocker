@@ -122,6 +122,10 @@ public class DNDCallBlockerInfoActivity extends ListActivity {
 					// show the dialog window
 					alert.show();
 					break;
+				case 3:
+					Intent intent = new Intent(Intent.ACTION_VIEW);
+					intent.setData(Uri.parse("market://details?id=hu.zoliweb.android.dndcallblocker.key"));
+					startActivity(intent);
 				default:
 					break;
 				}

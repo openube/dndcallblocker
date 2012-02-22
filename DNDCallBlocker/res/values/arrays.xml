@@ -26,6 +26,7 @@ along with DND Call Blocker.  If not, see <http://www.gnu.org/licenses/>.
 		<item>About</item>
 		<item>License</item>
 		<item>Buy me a coffee!</item>
+		<item>Remove ads</item>
 	</string-array>
 	<string-array name="number_exceptions">
 		<item>No Exception</item>
