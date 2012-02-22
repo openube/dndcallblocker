@@ -26,6 +26,7 @@ along with DND Call Blocker.  If not, see <http://www.gnu.org/licenses/>.
 		<item>Programról</item>
 		<item>Liszensz</item>
 		<item>Hívjon meg egy kávéra!</item>
+		<item>Reklámok eltüntetése</item>
 	</string-array>
 	<string-array name="number_exceptions">
     	<item>Nincs kivétel</item>
